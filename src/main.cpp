@@ -59,9 +59,7 @@ void drawPlayer(const Paddle& player) {
     DrawTextureV(player.texture, player.position, WHITE);
 }
 
-// FIX 2: removed the erroneous ball.velocity = {ball.speed, ball.speed} line
-// since ball.speed was uninitialized at that point. The velocity is properly
-// set below using the random angle calculation.
+
 void resetBall(Ball& ball) {
     ball.position = {screenWidth / 2.0f, screenHeight / 2.0f};
 
@@ -86,22 +84,23 @@ Ball initBall(const string& texturePath) {
     return ball;
 }
 
-// FIX 1: corrected scoring — left side = CPU scores, right side = Player scores
-// FIX 5: ball resets to center after each point
+
 void updateBall(Ball& ball, float deltaTime) {
+
     ball.position.x += ball.velocity.x * deltaTime;
     ball.position.y += ball.velocity.y * deltaTime;
 
     // Top / bottom wall bounce
     if (ball.position.y < 0) {
         ball.position.y = 0;
+        // ball.speed += 300;
         ball.velocity.y *= -1;
     }
     if (ball.position.y + ball.height > screenHeight) {
         ball.position.y = screenHeight - ball.height;
         ball.velocity.y *= -1;
     }
-
+    cout<<ball.speed<<endl;
     // Ball passes player's side → CPU scores
     if (ball.position.x < 0) {
         scoreCPU += 10;
@@ -150,7 +149,7 @@ void drawCPU(const Paddle& cpu) {
     DrawTextureV(cpu.texture, cpu.position, WHITE);
 }
 
-// FIX 3: CPU collision now correctly pushes ball to the left of the CPU paddle
+
 void collisionDetection(Ball& ball, Paddle& player, Paddle& cpu)
 {
     Rectangle playerRect = {
@@ -190,7 +189,7 @@ int main()
     while (!WindowShouldClose()) {
         float deltaTime = GetFrameTime();
 
-        // FIX 4: all updates and collision detection happen before drawing
+        
         updatePlayer(player, deltaTime);
         updateBall(ball, deltaTime);
         updateCPU(cpu, ball, deltaTime);
